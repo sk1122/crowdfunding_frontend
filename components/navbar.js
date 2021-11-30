@@ -61,7 +61,7 @@ export default function Navbar() {
 								))}
 							</div>
 						</div>
-						<div className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-400">Connect Wallet</div>
+						<div className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-400">Connect Wallet</div>
 					</div>
 					{/* <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 						<button

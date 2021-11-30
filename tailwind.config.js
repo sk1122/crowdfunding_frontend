@@ -3,7 +3,13 @@ module.exports = {
   purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        arvo: ['Arvo'],
+        outfit: ['Outfit', 'serif'],
+        eb: ['EB Garamond', 'serif'],
+      }
+    },
   },
   variants: {
     extend: {},

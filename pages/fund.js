@@ -11,6 +11,8 @@ import Footer from '../components/footer'
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
 
+	let mapp = [1, 2, 3, 4, 5, 6]
+
 	return (
 		<div>
 			<Head>
@@ -27,90 +29,24 @@ export default function Home() {
 				<div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
 					<h1 className='text-4xl font-bold mb-10 mt-10'>Projects</h1>
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<a href="#">
-								<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
-							</a>
-							<div class="p-5">
+						{mapp.map(value => (
+							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
 								<a href="#">
-									<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
+									<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
 								</a>
-								<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-								<a href="#">
-									Read more
-								</a>
+								<div class="p-5">
+									<a href="#">
+										<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
+									</a>
+									<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
+										<p>25 ETH Raised</p>
+										<p>10 ETH Remaining</p>
+										<p>35 ETH Needed</p>
+									</div>
+								</div>
 							</div>
-						</div>
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<a href="#">
-								<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
-							</a>
-							<div class="p-5">
-								<a href="#">
-									<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
-								</a>
-								<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-								<a href="#">
-									Read more
-								</a>
-							</div>
-						</div>
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<a href="#">
-								<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
-							</a>
-							<div class="p-5">
-								<a href="#">
-									<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
-								</a>
-								<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-								<a href="#">
-									Read more
-								</a>
-							</div>
-						</div>
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<a href="#">
-								<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
-							</a>
-							<div class="p-5">
-								<a href="#">
-									<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
-								</a>
-								<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-								<a href="#">
-									Read more
-								</a>
-							</div>
-						</div>
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<a href="#">
-								<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
-							</a>
-							<div class="p-5">
-								<a href="#">
-									<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
-								</a>
-								<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-								<a href="#">
-									Read more
-								</a>
-							</div>
-						</div>
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<a href="#">
-								<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
-							</a>
-							<div class="p-5">
-								<a href="#">
-									<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
-								</a>
-								<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-								<a href="#">
-									Read more
-								</a>
-							</div>
-						</div>
+						))}
 					</div>
 				</div>
 				<FAQ></FAQ>

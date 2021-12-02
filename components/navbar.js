@@ -4,6 +4,8 @@ import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 
+import { ethers } from "ethers"
+
 import useSWR from "swr"
 
 const navigation = [
@@ -19,6 +21,53 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+	const [account, setAccount] = useState(null)
+	const [isAuthenticated, setIsAuthenticated] = useState(false)
+	
+	const checkWalletConnected = async () => {
+		const { ethereum } = window
+		
+		if(!ethereum) {
+			console.log('Install Metamask')
+			return
+		}
+
+		const accounts = await ethereum.request({ method: 'eth_accounts' })
+
+		if(accounts.length !== 0) {
+			const account = accounts[0]
+			console.log("Found Account, ", account)
+			setAccount(account)
+		} else {
+			console.log("Create a Ethereum Account")
+		}
+	}
+
+	const login = async () => {
+		try {
+			const { ethereum } = window
+		
+			if(!ethereum) {
+				console.log("Install Metamask")
+				return
+			}
+		
+			const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+			
+			console.log("Connected, ", accounts[0])
+			setAccount(accounts[0])
+			setIsAuthenticated(true)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	useEffect(checkWalletConnected, [])
+
+	useEffect(() => {
+		console.log(account)
+	}, [account])
+
 	return (
 		<Disclosure as="nav" className="absolute w-full bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-60 border border-opacity-0">
 			{({ open }) => (
@@ -38,7 +87,9 @@ export default function Navbar() {
 					</div>
 					<div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
 						<div className="flex-shrink-0 flex items-center">
-							<h1 className="font-inter text-black px-3 rounded-md text-xl font-semibold">Crowdfunding</h1>
+							<Link href='/'>
+								<h1 className="font-inter text-black px-3 rounded-md text-xl font-semibold">Crowdfunding</h1>
+							</Link>
 						</div>
 					</div>
 					<div className="flex">
@@ -61,7 +112,7 @@ export default function Navbar() {
 								))}
 							</div>
 						</div>
-						<div className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-400">Connect Wallet</div>
+						{isAuthenticated ? <div>Hello</div> : <div className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-400" onClick={login}>Connect Wallet</div>}
 					</div>
 					{/* <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 						<button

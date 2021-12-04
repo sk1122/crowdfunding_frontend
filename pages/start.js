@@ -8,7 +8,7 @@ import Navbar from '../components/navbar'
 import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
-import {crowdfunding} from "../interface/crowdfunding.json"
+import crowdfunding from "../interface/crowdfunding.json"
 const contractAddress = "0x587Ec681f4B95bfc035DE764C3318A15a0082471";
 
 export default function Home() {

@@ -139,9 +139,14 @@ export default function Home() {
 			 let txn = await contract.startProject("test contract title ", "test description", 15, 100000, "pune", "test" );
 			await txn.wait();
 			console.log(txn)
-			 
+
+			 // here we are fetching the projects of particualr address not all projects
+			 // might not work because the address and abi is not updated yet
+			let fetchProjects = await contract.returnParticularProjects();
+			console.log(fetchProjects)
+			// fetchProjects here is an aaray of addresses of projects deployed by the client
 		 } catch (e) {
-			 
+
 			 console.log(e);
 			 
 		 }

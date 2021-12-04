@@ -1,17 +1,152 @@
 import Head from 'next/head'
 import Link from 'next/link'
-
+import {ethers} from "ethers"
 import { useState } from 'react'
-
+// import { abi } from "../interface/crowdfunding.json"
+ 
 import Navbar from '../components/navbar'
 import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
+const contractAddress = "0x25A02771238229EC987c27fca4BBD087C621700a";
+const abi = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "contractAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "projectStarter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "projectTitle",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "projectDesc",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "deadline",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "goalAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "ProjectStarted",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "returnAllProjects",
+		"outputs": [
+			{
+				"internalType": "contract Project[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_projectID",
+				"type": "uint256"
+			}
+		],
+		"name": "returnSpecificProject",
+		"outputs": [
+			{
+				"internalType": "contract Project",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "durationInDays",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amountToRaise",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "category",
+				"type": "string"
+			}
+		],
+		"name": "startProject",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
 
-	let mapp = [1, 2, 3, 4, 5, 6]
+	let mapp = [1, 2, 3, 4, 5, 6];
+
+     async function startProject() {
+		 const provider = new ethers.providers.Web3Provider(window.ethereum);
+		 const signer = provider.getSigner();
+		 const contract = new ethers.Contract(contractAddress, abi, signer);
+
+		 try {
+			 let txn = await contract.startProject("test contract title ", "test description", 15, 100000, "pune", "test" );
+			await txn.wait();
+			console.log(txn)
+			 
+		 } catch (e) {
+			 
+			 console.log(e);
+			 
+		 }
+	 }
+
 
 	return (
 		<div>
@@ -94,7 +229,8 @@ export default function Home() {
 						</div>
 					</div>
 					<div class="flex items-center justify-center mt-5">
-						<button onClick={() => setIsOpen(false)} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+						<button onClick={() => {setIsOpen(false);
+						  startProject();  }} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
 							Start
 						</button>
 					</div>

@@ -1,42 +1,84 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import {ethers} from "ethers"
-import { useState } from 'react'
-// import { abi } from "../interface/crowdfunding.json"
+import { useState, useEffect } from 'react'
  
 import Navbar from '../components/navbar'
 import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
-import crowdfunding from "../interface/crowdfunding.json"
-const contractAddress = "0x587Ec681f4B95bfc035DE764C3318A15a0082471";
+import projectContract from "../interface/projectContract.json"
+
+
+const contractAddress = "0xF156997A1Af7eccB5B656c68C2a509ab04865359";
 
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
-
+    let [selects, setSelects] = useState("");
 	let mapp = [1, 2, 3, 4, 5, 6];
+    let [allProjects, setAllProjects] = useState([]);
+	let [account, setAccount] = useState("");
+	
+	useEffect( getProjectsFunc , []);
+
+	async function getProjectsFunc() {
+		
+		account = await ethereum.request({ method: 'eth_accounts' })
+		setAccount(account);
+		console.log(account[0]);
+		
+		const provider = new ethers.providers.Web3Provider(window.ethereum);
+		const signer = provider.getSigner();
+		 const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
+
+			try {
+		let getAllProjectsArray = await contract.getAlProjects(); 
+		console.log(getAllProjectsArray);
+		 console.log(getAllProjectsArray[0].title);
+		 console.log(getAllProjectsArray[0][4]);
+		 
+		setAllProjects(getAllProjectsArray);
+			}
+			catch (e) {
+				console.log(e);
+				
+			}
+	}
 
      async function startProject() {
-		 const provider = new ethers.providers.Web3Provider(window.ethereum);
-		 const signer = provider.getSigner();
-		 const contract = new ethers.Contract(contractAddress, crowdfunding.abi, signer);
+		 console.log('FIRST LINE');
+		 getProjectsFunc();
+		 
+		const provider = new ethers.providers.Web3Provider(window.ethereum);
+		const signer = provider.getSigner();
+		 const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
 		 try {
-			 let txn = await contract.startProject("test contract title ", "test description", 15, 100000, "pune", "test" );
-			await txn.wait();
-			console.log(txn)
+			 let title = document.getElementById("title").value;
+			 let desc = document.getElementById("description").value;
+			 let amount = document.getElementById("fundamount").value;
+			 let time = document.getElementById("time").value;
+			 let location = document.getElementById("location").value;
 
-			 // here we are fetching the projects of particualr address not all projects
-			 // might not work because the address and abi is not updated yet
-			let fetchProjects = await contract.returnParticularProjects();
-			console.log(fetchProjects)
-			// fetchProjects here is an aaray of addresses of projects deployed by the client
+			 let txn = await contract.startProject(title, desc, amount, time, location, selects );
+			let txnreceipt = await txn.wait();
+			console.log(txnreceipt);
+			getProjectsFunc();
+		
+			
 		 } catch (e) {
 
 			 console.log(e);
-			 
-		 }
+		   }
+           
+		  
+		    
+
+		
 	 }
+
+
+	 
 
 
 	return (
@@ -55,20 +97,20 @@ export default function Home() {
 				<div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
 					<h1 className='text-4xl font-bold mb-10 mt-10'>Your Projects</h1>
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
-						{mapp.map(value => (
+						{ allProjects.filter((ele)=> ele.creator.toLowerCase() == account[0].toLowerCase()).map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
 								<a href="#">
 									<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
 								</a>
 								<div class="p-5">
 									<a href="#">
-										<h5 className='font-bold text-lg'>Noteworthy technology acquisitions 2021</h5>
+										<h5 className='font-bold text-lg'>{project.title}</h5>
 									</a>
-									<p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-										<p>25 ETH Raised</p>
-										<p>10 ETH Remaining</p>
-										<p>35 ETH Needed</p>
+										<p>{} Wei Raised</p>
+										<p>{} Wei Goal</p>
+										<p>{} ETH Needed</p>
 									</div>
 								</div>
 							</div>
@@ -76,43 +118,50 @@ export default function Home() {
 					</div>
 				</div>
 				<FAQ></FAQ>
-				<Footer></Footer>
+				<Footer ></Footer>
 			</div>
 			<MyModal isOpen={isOpen} setIsOpen={setIsOpen} title='Start a Project'>
 				<form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
 					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="title">
 							Project Name
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" placeholder="Title" />
 					</div>
 					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="description">
 							Project Description
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" type="text" placeholder="Description" />
 					</div>
 					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="fundamount">
 							Project Fund Amount
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Username" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fundamount" type="number" placeholder="Fund Amount" />
 					</div>
 					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="time">
+							Raise Until (In days)
+						</label>
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="time" type="number" placeholder="Raise Until" />
+					</div>
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
 							Location
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Username" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="text" placeholder="Location" />
 					</div>
 					<div class="w-full px-3 mb-6 md:mb-0">
 						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
 							Category
 						</label>
 						<div class="relative">
-							<select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-								<option>New Mexico</option>
-								<option>Missouri</option>
-								<option>Texas</option>
+							<select value={selects} onChange={(e) => setSelects(e.target.value)} class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
+								<option> DAO </option>
+								<option> NFT </option>
+								<option> DeFi </option>
+								<option> Other </option>
 							</select>
 							<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
 								<svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>

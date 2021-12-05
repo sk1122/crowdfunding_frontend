@@ -1,4 +1,6 @@
 export default function Footer() {
+
+
 	return (
 		<footer class="footer-1 h-screen w-full bg-gray-100 py-8 sm:py-12">
 			<div class="container mx-auto px-4">

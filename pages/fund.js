@@ -9,7 +9,7 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
-const contractAddress = "0xF156997A1Af7eccB5B656c68C2a509ab04865359";
+const contractAddress = "0x163735EEC7029346ba6f55BdCE13a435e1a08763";
 
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
@@ -28,7 +28,7 @@ export default function Home() {
 		 const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
 			try {
-		let getAllProjectsArray = await contract.getAlProjects(); 
+		let getAllProjectsArray = await contract.getAllProjects(); 
 		console.log(getAllProjectsArray);
 		 console.log(getAllProjectsArray[0].title);
 		 console.log(getAllProjectsArray[0][4]);
@@ -61,7 +61,7 @@ export default function Home() {
 						{allProjects.map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
 								<a href="#" id={project.id}>
-									<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
+									<img src={project.img} alt="" />
 								</a>
 								<div class="p-5">
 									<a href="#">

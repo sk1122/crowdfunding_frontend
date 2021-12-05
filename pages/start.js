@@ -8,11 +8,16 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 import projectContract from "../interface/projectContract.json"
+import Moralis from 'moralis'
 
-
-const contractAddress = "0xF156997A1Af7eccB5B656c68C2a509ab04865359";
+const contractAddress = "0x163735EEC7029346ba6f55BdCE13a435e1a08763";
 
 export default function Home() {
+	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
+    const appId = "bOY1ool81GNT0Ty6e99SBOSNi9aZ5jDfJXQhBjbC";
+    Moralis.start({ serverUrl, appId });
+
+
 	let [isOpen, setIsOpen] = useState(false)
     let [selects, setSelects] = useState("");
 	let mapp = [1, 2, 3, 4, 5, 6];
@@ -32,7 +37,7 @@ export default function Home() {
 		 const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
 			try {
-		let getAllProjectsArray = await contract.getAlProjects(); 
+		let getAllProjectsArray = await contract.getAllProjects(); 
 		console.log(getAllProjectsArray);
 		 console.log(getAllProjectsArray[0].title);
 		 console.log(getAllProjectsArray[0][4]);
@@ -46,6 +51,14 @@ export default function Home() {
 			}
 	}
 
+	 let uploadImageOnIPFS = async () => {
+		const data = fileInput.files[0]
+		const file = new Moralis.File(data.name, data)
+		await file.saveIPFS();
+	   console.log('uploaded on ipfs', file.saveIPFS());
+	   return file.ipfs();
+	 }
+
      async function startProject() {
 		 console.log('FIRST LINE');
 		 getProjectsFunc();
@@ -57,11 +70,20 @@ export default function Home() {
 		 try {
 			 let title = document.getElementById("title").value;
 			 let desc = document.getElementById("description").value;
-			 let amount = document.getElementById("fundamount").value;
+
+			 let amountInEthers = document.getElementById("fundamount").value;
+			 let amount = ethers.utils.parseEther(amountInEthers);
+
 			 let time = document.getElementById("time").value;
 			 let location = document.getElementById("location").value;
 
-			 let txn = await contract.startProject(title, desc, amount, time, location, selects );
+			 // image process upload to ipfs first 
+			 let img = await uploadImageOnIPFS();
+			console.log(img);
+			
+		
+			
+			 let txn = await contract.startProject(title, desc, time, amount, location, selects, img );
 			let txnreceipt = await txn.wait();
 			console.log(txnreceipt);
 			getProjectsFunc();
@@ -71,12 +93,7 @@ export default function Home() {
 
 			 console.log(e);
 		   }
-           
-		  
-		    
-
-		
-	 }
+    }
 
 
 	 
@@ -101,7 +118,7 @@ export default function Home() {
 						{ allProjects.filter((ele)=> ele.creator.toLowerCase() == account[0].toLowerCase()).map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm" id={project.id}>
 								<a href="#">
-									<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
+									<img src={project.img} alt="" />
 								</a>
 								<div class="p-5">
 									<a href="#">
@@ -168,6 +185,12 @@ export default function Home() {
 								<svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
 							</div>
 						</div>
+					</div>
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
+						Upload Project Cover (On IPFS)
+						</label>
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="file" name="fileInput" id="fileInput" placeholder="Upload Project Cover" />
 					</div>
 					<div class="flex items-center justify-center mt-5">
 						<button onClick={() => {setIsOpen(false);

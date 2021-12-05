@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import {ethers} from "ethers"
+import {ethers, utils} from "ethers"
 import { useState, useEffect } from 'react'
  
 import Navbar from '../components/navbar'
@@ -36,6 +36,7 @@ export default function Home() {
 		console.log(getAllProjectsArray);
 		 console.log(getAllProjectsArray[0].title);
 		 console.log(getAllProjectsArray[0][4]);
+
 		 
 		setAllProjects(getAllProjectsArray);
 			}
@@ -98,7 +99,7 @@ export default function Home() {
 					<h1 className='text-4xl font-bold mb-10 mt-10'>Your Projects</h1>
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 						{ allProjects.filter((ele)=> ele.creator.toLowerCase() == account[0].toLowerCase()).map(project => (
-							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
+							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm" id={project.id}>
 								<a href="#">
 									<img src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
 								</a>
@@ -108,9 +109,9 @@ export default function Home() {
 									</a>
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-										<p>{} Wei Raised</p>
-										<p>{} Wei Goal</p>
-										<p>{} ETH Needed</p>
+										<p>{project.currentBalance.toNumber()} ETH Raised</p>
+										<p>{project.amountGoal.toNumber()} ETH Goal</p>
+										<p>{project.amountGoal.toNumber() - project.currentBalance.toNumber()} ETH Needed</p>
 									</div>
 								</div>
 							</div>

@@ -9,30 +9,29 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
-const contractAddress = "0x163735EEC7029346ba6f55BdCE13a435e1a08763";
+const contractAddress = "0x1E0715F1Fc2a9930A89Fd03f51b4E3b410386578";
 
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
 
 	let mapp = [1, 2, 3, 4, 5, 6];
 	let [allProjects, setAllProjects] = useState([]);
-
+    
 	useEffect( getProjectsFunc , []);
 	async function getProjectsFunc() {
 		
-		let account = await ethereum.request({ method: 'eth_accounts' })
-		
-		
+		let account = await ethereum.request({ method: 'eth_accounts' });
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
-		const signer = provider.getSigner();
-		 const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
+		const signer = provider.getSigner();
+		const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
+        
 			try {
 		let getAllProjectsArray = await contract.getAllProjects(); 
 		console.log(getAllProjectsArray);
-		 console.log(getAllProjectsArray[0].title);
-		 console.log(getAllProjectsArray[0][4]);
-		 
+		console.log(getAllProjectsArray[0].title);
+		console.log(getAllProjectsArray[0][4]);
+	
 		setAllProjects(getAllProjectsArray);
 			}
 			catch (e) {
@@ -70,8 +69,8 @@ export default function Home() {
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
 									<p>{project.currentBalance.toNumber()} ETH Raised</p>
-										<p>{project.amountGoal.toNumber()} ETH Goal</p>
-										<p>{project.amountGoal.toNumber() - project.currentBalance.toNumber()} ETH Needed</p>
+										<p>{ethers.utils.formatEther(project.amountGoal)} ETH Goal</p>
+										<p>{ethers.utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
 									</div>
 								</div>
 							</div>

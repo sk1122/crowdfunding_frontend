@@ -10,7 +10,7 @@ import Footer from '../components/footer'
 import projectContract from "../interface/projectContract.json"
 import Moralis from 'moralis'
 
-const contractAddress = "0x163735EEC7029346ba6f55BdCE13a435e1a08763";
+const contractAddress = "0x1E0715F1Fc2a9930A89Fd03f51b4E3b410386578";
 
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
@@ -73,17 +73,26 @@ export default function Home() {
 
 			 let amountInEthers = document.getElementById("fundamount").value;
 			 let amount = ethers.utils.parseEther(amountInEthers);
+			 
 
 			 let time = document.getElementById("time").value;
 			 let location = document.getElementById("location").value;
 
 			 // image process upload to ipfs first 
 			 let img = await uploadImageOnIPFS();
-			console.log(img);
+			 console.log(img);
+
+			const object = {
+				"title" : `${title}`,
+				"description": "This is a nft which is rewarded for contributing in any project on light",
+				"image": `${img}`
+			  }
+			const file = new Moralis.File("file.json", {base64 : btoa(JSON.stringify(object))});
+			let uri = await file.saveIPFS();
+			console.log(uri._ipfs);
 			
-		
-			
-			 let txn = await contract.startProject(title, desc, time, amount, location, selects, img );
+	
+			let txn = await contract.startProject(title, desc, time, amount, location, selects, img, uri._ipfs);
 			let txnreceipt = await txn.wait();
 			console.log(txnreceipt);
 			getProjectsFunc();
@@ -126,9 +135,9 @@ export default function Home() {
 									</a>
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-										<p>{project.currentBalance.toNumber()} ETH Raised</p>
-										<p>{project.amountGoal.toNumber()} ETH Goal</p>
-										<p>{project.amountGoal.toNumber() - project.currentBalance.toNumber()} ETH Needed</p>
+										<p>{ethers.utils.formatEther(project.currentBalance)} ETH Raised</p>
+										<p>{ethers.utils.formatEther((project.amountGoal))} ETH Goal</p>
+										<p>{ethers.utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
 									</div>
 								</div>
 							</div>

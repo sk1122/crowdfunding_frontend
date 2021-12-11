@@ -26,18 +26,17 @@ export default function Home() {
 		const signer = provider.getSigner();
 		const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
         
-			try {
-		let getAllProjectsArray = await contract.getAllProjects(); 
-		console.log(getAllProjectsArray);
-		console.log(getAllProjectsArray[0].title);
-		console.log(getAllProjectsArray[0][4]);
-	
-		setAllProjects(getAllProjectsArray);
-			}
-			catch (e) {
-				console.log(e);
-				
-			}
+		try {
+			let getAllProjectsArray = await contract.getAllProjects(); 
+			console.log(getAllProjectsArray);
+			console.log(getAllProjectsArray[0].title);
+			console.log(getAllProjectsArray[0][4]);
+			console.log(getAllProjectsArray)
+			setAllProjects(getAllProjectsArray);
+		}
+		catch (e) {
+			console.log(e);
+		}
 	}
 
     
@@ -59,13 +58,13 @@ export default function Home() {
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 						{allProjects.map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-								<a href="#" id={project.id}>
+								<Link href={`/project/${project.projectId}`} id={project.projectId}>
 									<img src={project.img} alt="" />
-								</a>
+								</Link>
 								<div class="p-5">
-									<a href="#">
+									<Link href={`/project/${project.projectId}`}>
 										<h5 className='font-bold text-lg'>{project.title}</h5>
-									</a>
+									</Link>
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
 									<p>{project.currentBalance.toNumber()} ETH Raised</p>

@@ -177,7 +177,13 @@ export default function Home() {
 						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
 							Location
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="text" placeholder="Location" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Location" />
+					</div>
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+							Days
+						</label>
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Days" />
 					</div>
 					<div class="w-full px-3 mb-6 md:mb-0">
 						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">

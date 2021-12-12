@@ -18,7 +18,7 @@ export default function Project() {
 	const [project, setProject] = useState([])
 	const [amountToFund, setAmount] = useState()
 	const [myFunds, setMyFunds] = useState("");
-	const [account, setAccount] = useState("");
+	
 	
 
 
@@ -28,7 +28,7 @@ export default function Project() {
 		console.log(id)
 		let account = await ethereum.request({ method: 'eth_accounts' });
 		
-		 setAccount(account[0]);
+		 
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 		const signer = provider.getSigner();
@@ -87,9 +87,10 @@ export default function Project() {
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
         console.log(id);
-		console.log("account is ", account);
+		let account = await ethereum.request({ method: 'eth_accounts' });
+		console.log("account is ", account[0]);
 		
-		let myFunding = await contract.myContributions(Number(id), account);
+		let myFunding = await contract.myContributions(Number(id), account[0]);
 	
 		console.log(myFunding);
 		setMyFunds((Number(myFunding)/1000000000000000000).toFixed(6));
@@ -121,7 +122,7 @@ export default function Project() {
 							{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000} ETH Needed</p> }
 							{Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 ETH Needed</p> }
 						</div>
-					</div>
+					</div> 
 				</div>
 				<p className='translate-x-36'>	Your Contribution - {myFunds} </p>
 				<input className="shadow appearance-none translate-x-32  border rounded w-230 py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Amount In Ether" onChange={(e)=> setAmount(e.currentTarget.value)} />

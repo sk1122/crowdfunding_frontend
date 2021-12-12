@@ -12,11 +12,12 @@ const contractAddress = "0x16CCD8732057a52D805F03932b8b102E0695b3CD";
 
 export default function Dashboard() {
 	let [allProjects, setAllProjects] = useState([]);
-    
+    let [account, setAccount] = useState("");
 	useEffect( getProjectsFunc , []);
 	async function getProjectsFunc() {
 		
 		let account = await ethereum.request({ method: 'eth_accounts' });
+		setAccount(account);
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 		const signer = provider.getSigner();
@@ -42,31 +43,39 @@ export default function Dashboard() {
 			</Head>
 			<Navbar></Navbar>
 			
-			<div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
+			<div className="w-full h-full bg-gray-400 flex justify-start items-center  flex-col">
+			<br />
+			<br />
+			<br />
+			<br />
 				<h1 className='text-4xl font-bold mb-10 mt-10'>Projects</h1>
 				<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
-					{allProjects.map(project => (
-						<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-							<Link href={`/project/${project.projectId}`} id={project.projectId}>
-								<img src={project.img} alt="" className="w-full h-64" />
+						{ allProjects.filter((ele)=> ele.creator.toLowerCase() == account[0].toLowerCase()).map(project => (
+							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm" id={project.id}>
+							<Link href={`/project/${Number(project.projectId)}`} id={project.projectId}>
+									<img src={project.img} alt="" />
 							</Link>
-							<div class="p-5">
-								<Link href={`/project/${project.projectId}`}>
-									<h5 className='font-bold text-lg'>{project.title}</h5>
-								</Link>
-								<p>{project.description}</p>
-								<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5 mb-5">
-									<p>{project.currentBalance.toNumber()} ETH Raised</p>
-									<p>{ethers.utils.formatEther(project.amountGoal)} ETH Remaining</p>
-									<p>{ethers.utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
+								<div class="p-4">
+									<a href="#">
+										<h5 className='font-bold text-lg'>{project.title}</h5>
+									</a>
+									{project.state == 0 && <p className=''> Current Status :- Fundrasing</p>}
+									{project.state == 1 && <p className=''> Current Status :- Expired</p>}
+									{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
+									
+									<br />
+									<p>{project.description}</p>
+									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
+										<p>{Number(ethers.utils.formatEther(project.currentBalance)).toFixed(6)} ETH Raised</p>
+										<br />
+										<p>{Number(ethers.utils.formatEther(project.amountGoal)).toFixed(6)} ETH Goal</p>
+										<br />
+										<p>{Number(ethers.utils.formatEther(project.amountGoal)).toFixed(6) - Number(ethers.utils.formatEther(project.currentBalance)).toFixed(6)} ETH Needed</p>
+									</div>
 								</div>
-								<Link href='#'>
-									<a className='bg-gray-900 text-white px-3 py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4'>Requested Funds</a>
-								</Link>
 							</div>
-						</div>
-					))}
-				</div>
+						))}
+					</div>
 			</div>
 			<FAQ></FAQ>
 			<Footer></Footer>

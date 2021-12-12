@@ -9,7 +9,7 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
-const contractAddress = "0x1E0715F1Fc2a9930A89Fd03f51b4E3b410386578";
+const contractAddress = "0x16CCD8732057a52D805F03932b8b102E0695b3CD";
 
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
@@ -58,18 +58,23 @@ export default function Home() {
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 						{allProjects.map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
-								<Link href={`/project/${project.projectId}`} id={project.projectId}>
+								<Link href={`/project/${Number(project.projectId)}`} id={project.projectId}>
 									<img src={project.img} alt="" />
 								</Link>
 								<div class="p-5">
 									<Link href={`/project/${project.projectId}`}>
 										<h5 className='font-bold text-lg'>{project.title}</h5>
 									</Link>
+									{project.state == 0 && <p className=''> Current Status :- Fundrasing</p>}
+									{project.state == 1 && <p className=''> Current Status :- Expired</p>}
+									{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
+									
+									<br />
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-									<p>{project.currentBalance.toNumber()} ETH Raised</p>
-										<p>{ethers.utils.formatEther(project.amountGoal)} ETH Goal</p>
-										<p>{ethers.utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
+									    <p>{utils.formatEther(project.currentBalance)} ETH Raised</p>
+										<p>{utils.formatEther(project.amountGoal)} ETH Goal</p>
+										<p>{utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
 									</div>
 								</div>
 							</div>

@@ -2,7 +2,7 @@
   "_format": "hh-sol-artifact-1",
   "contractName": "projectContract",
   "sourceName": "contracts/crowdfunding.sol",
-  "abi": [
+  "abi":[
     {
       "anonymous": false,
       "inputs": [
@@ -161,11 +161,6 @@
             {
               "internalType": "string",
               "name": "img",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "uri",
               "type": "string"
             },
             {
@@ -346,11 +341,6 @@
               "type": "string"
             },
             {
-              "internalType": "string",
-              "name": "uri",
-              "type": "string"
-            },
-            {
               "internalType": "enum projectContract.State",
               "name": "state",
               "type": "uint8"
@@ -455,6 +445,11 @@
           "internalType": "uint256",
           "name": "_projectId",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_toCheck",
+          "type": "address"
         }
       ],
       "name": "myContributions",
@@ -526,11 +521,6 @@
         {
           "internalType": "string",
           "name": "img",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "uri",
           "type": "string"
         },
         {

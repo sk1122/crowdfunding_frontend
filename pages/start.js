@@ -10,7 +10,7 @@ import Footer from '../components/footer'
 import projectContract from "../interface/projectContract.json"
 import Moralis from 'moralis'
 
-const contractAddress = "0x16CCD8732057a52D805F03932b8b102E0695b3CD";
+const contractAddress = "0x57CbA0853e54f80D566228c6842c32Fc6d11A3a1";
 
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
@@ -100,23 +100,10 @@ export default function Home() {
 			
 		 } catch (e) {
 
-			 console.log(e);
+			 alert(e.message)
 		   }
     }
 
-
-	async function getStatus(id) {
-		const provider = new ethers.providers.Web3Provider(window.ethereum);
-		const signer = provider.getSigner();
-		 const contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
-
-		 
-			 let Status  = contract.getCurrentState(Number(id));
-			 console.log("Status is", Status);
-			 
-			 return Status;
-
-	}
 
 	 
 

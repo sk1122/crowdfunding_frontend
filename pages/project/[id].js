@@ -10,7 +10,7 @@ import Navbar from "../../components/navbar"
 import { useEffect } from 'react/cjs/react.development'
 import projectContract from "../../interface/projectContract.json"
 
-const contractAddress = "0x16CCD8732057a52D805F03932b8b102E0695b3CD";
+const contractAddress = "0x57CbA0853e54f80D566228c6842c32Fc6d11A3a1";
 
 export default function Project() {	
 	let [isOpen, setIsOpen] = useState(false);
@@ -22,6 +22,14 @@ export default function Project() {
 	const [requests, setRequests] = useState([]);
 	const [amountToFund, setAmount] = useState()
 	const [myFunds, setMyFunds] = useState("");
+
+	// state for withdraw
+	const [amountToWithdraw, setAmountToWithdraw] = useState(0);
+	const [description, setDescription ] = useState("");
+	const [receiptent, setReceiptent] = useState("");
+
+
+
 	
 	
 
@@ -32,8 +40,6 @@ export default function Project() {
 		console.log(id)
 		let account = await ethereum.request({ method: 'eth_accounts' });
 		setAccount(account[0]);
-        let creator = project.creator;
-		setCreator(creator);
 		 
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -45,6 +51,8 @@ export default function Project() {
 			let getProject = await contract.getDetails(Number(id));
 			setProject(getProject)
 			console.log(getProject);
+            
+            
 
 
 			await myContribution(id)
@@ -53,6 +61,7 @@ export default function Project() {
 		catch (e) {
 			console.log(e);
 		}
+		await getAllRequest();
 	}
 
 	async function fundProject() {
@@ -72,7 +81,7 @@ export default function Project() {
 		 getProject(id)
 			
 		} catch (e) {
-			console.log(e);
+			alert(e.message)
 			
 			
 		}
@@ -82,10 +91,30 @@ export default function Project() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
-        
-		let refundtxn  = await contract.getRefund(id);
+        try {
+		let refundtxn  = await contract.getRefund(Number(id));
 		alert("refund status",refund)
 		getProject(id)
+		}
+		catch (e) {
+			alert(e);
+		}
+
+	}
+	async function vote(e) {
+		let provider = new ethers.providers.Web3Provider(window.ethereum);
+		let signer = provider.getSigner();
+		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
+		try {
+			console.log(e.currentTarget.id);
+			
+		let votetxn  = await contract.voteRequest(Number(id), e.currentTarget.id);
+		await votetxn.wait();
+		getProject(id)
+	     }
+		catch (e) {
+			alert(e);
+		}
 	}
 
 	async function myContribution() {
@@ -93,10 +122,10 @@ export default function Project() {
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
         console.log(id);
-		let account = await ethereum.request({ method: 'eth_accounts' });
-		console.log("account is ", account[0], Creator);
+		let accounts = await ethereum.request({ method: 'eth_accounts' });
+		console.log("account is ", accounts[0], Creator);
 		
-		let myFunding = await contract.myContributions(Number(id), account[0]);
+		let myFunding = await contract.myContributions(Number(id), accounts[0]);
 	
 		console.log(myFunding);
 		setMyFunds((Number(myFunding)/1000000000000000000).toFixed(6));
@@ -109,12 +138,42 @@ export default function Project() {
 		try {
 		let allRequests = await contract.getAllRequests(Number(id));
 		setRequests(allRequests);	
+		console.log(allRequests);
+		
 			
 		} catch (e) {
-			console.log(e);
+			alert(e.message)
 			
 		}
 
+	}
+
+	async function createRequest() {
+		if(account.toLowerCase() != project.creator.toLowerCase() ) {
+			alert("You are not the creator of this project/campaign so you can't create request");
+		}
+
+		let provider = new ethers.providers.Web3Provider(window.ethereum);
+		let signer = provider.getSigner();
+		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
+
+
+		try {
+
+			
+			let amount = ethers.utils.parseEther(amountToWithdraw);
+			console.log(amount, description, receiptent);
+
+			
+			let createRequestTxn = await contract.createRequest(Number(id), description, amount, receiptent);
+			await createRequestTxn.wait();
+			console.log("request created"); 
+			getAllRequest();
+			} catch (e) {
+				alert(e.message)
+	            
+			}		
+		
 	}
 
 
@@ -154,96 +213,62 @@ export default function Project() {
 			
 			</div>
 			{   <div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
-					<h1 className='text-4xl font-bold mb-10 mt-10'> Project Withdrawal Requests</h1>
-					{ <a onClick={() => setIsOpen(true)} className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12'> Create Withdrawal Request</a>}
+					<h1 className='text-4xl font-bold mb-5 mt-10'> Project Withdrawal Requests</h1>
+
+					{<a onClick={() => setIsOpen(true)  } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12 '> Create Withdrawal Request</a>}
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 
 
-					<div class="p-4 md:w-full w-full"> 
-					{requests.map( (request) => (<div class="h-full bg-gray-100 p-8 rounded">
+					{requests.map( (request) => (<div class="p-4 md:w-full w-full"> 
+					      <div class="h-full bg-gray-100 p-8 rounded">
           
         
-                       <p className="leading-relaxed mb-6"> {request.desc} </p>
+                       <p className="leading-relaxed font-medium mb-6"> {request.desc} </p>
                        <a className="inline-flex items-center">
-            			<span className="flex-grow flex flex-col pl-4">
+            			<span className="flex-grow flex flex-col ">
+             			 <span className="title-font font-medium text-gray-900"> Current Status  - {!request.status && "Not Completed"} {request.status && "Completed"}</span>
+							 <br />
+             			 <span className="title-font font-medium text-gray-900"> Request ID  - {Number(request.requestId)}</span>
              			 <span className="title-font font-medium text-gray-900"> Withdrawal Address  - {request.receipient}</span>
-             			 <span className="title-font font-medium text-gray-900"> Withdrawal Value  - {(Number(request.value)/1000000000000000000).toFixed(6)} </span>
-             			 <span className="title-font font-medium text-gray-900"> Total Current Votes  - {request.noOfVoter} </span>
-             			 <span className="title-font font-medium text-gray-900"> Votes Required For Withdrawal  - {Number(project.noOfContributors) - Number(request.noOfVoter)} </span>
-						  <a className='bg-gray-900 text-white px-3  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' > Vote This Request</a> 
+             			 <span className="title-font font-medium text-gray-900"> Withdrawal Value  - {(Number(request.value)/1000000000000000000).toFixed(5)} </span>
+             			 <span className="title-font font-medium text-gray-900"> Total Current Votes  - {Number(request.noOfVoter)} </span>
+             			 <span className="title-font font-medium text-gray-900">
+						   Votes Required For Withdrawal  - {Math.round((Number(project.noOfContributors) - Number(request.noOfVoter))/2)}
+						    </span>
+						  { !request.status && <a className='bg-gray-900 text-white px-16  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-10' id={Number(request.requestId)} onClick={(e) => {vote(e)}} > <p className='mx-16 px-4'> Vote This Request</p></a> }
             
                       </span>
                    </a>
-                   </div>) )}
-                  </div>
+                   </div>
+                  </div>) )}
 					 
 					 
 						
 
 					</div>
-				</div> 
-
-
-
-
-
-
-					
-
-				
-				
-				}
+				</div> }
 				<MyModal isOpen={isOpen} setIsOpen={setIsOpen} title='Start a Project'>
 				<form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
 					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="title">
-							Project Name
-						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" placeholder="Title" />
-					</div>
-					<div class="mb-4">
 						<label class="block text-gray-700 text-sm font-bold mb-2" for="description">
-							Project Description
+							Request Description
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" type="text" placeholder="Description" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" onChange={(e) => setDescription(e.currentTarget.value)} type="text" placeholder="description" />
 					</div>
 					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="fundamount">
-							Project Fund Amount
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="amount">
+							Request  Amount
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fundamount" type="number" placeholder="Fund Amount" />
-					</div>
-					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="time">
-							Raise Until (In days)
-						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="time" type="number" placeholder="Raise Until" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" onChange={(e) => setAmountToWithdraw(e.currentTarget.value)} id="amount" type="number" placeholder="request Amount" />
 					</div>
 					<div class="mb-4">
 						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
-							Location
+							Receiptent Address
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="text" placeholder="Location" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" onChange={(e)=> setReceiptent(e.currentTarget.value)} id="address" type="text" placeholder="address of the receiptent" />
 					</div>
-					
-					<div class="w-full px-3 mb-6 md:mb-0">
-						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
-							Category
-						</label> 
-					
-					</div>
-					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
-						Upload Project Cover (On IPFS)
-						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="file" name="fileInput" id="fileInput" placeholder="Upload Project Cover" />
-					</div>
-					<div class="flex items-center justify-center mt-5">
-						<button onClick={() => {setIsOpen(false);
-						  startProject();  }} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-							Start
-						</button>
-					</div>
+					<a onClick={() =>{ setIsOpen(false)
+					createRequest() } } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12'> Create Withdrawal Request</a>
 				</form>
 			</MyModal>
 

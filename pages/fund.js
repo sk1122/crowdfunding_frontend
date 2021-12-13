@@ -9,7 +9,7 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
-const contractAddress = "0x16CCD8732057a52D805F03932b8b102E0695b3CD";
+const contractAddress = "0x57CbA0853e54f80D566228c6842c32Fc6d11A3a1";
 
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
@@ -35,7 +35,7 @@ export default function Home() {
 			setAllProjects(getAllProjectsArray);
 		}
 		catch (e) {
-			console.log(e);
+			alert(e.message)
 		}
 	}
 

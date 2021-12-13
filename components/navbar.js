@@ -63,6 +63,7 @@ export default function Navbar() {
 	}
 
 	useEffect(checkWalletConnected, [])
+	useEffect(login, [])
 
 	useEffect(() => {
 		console.log(account)

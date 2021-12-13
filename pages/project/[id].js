@@ -10,15 +10,16 @@ import Navbar from "../../components/navbar"
 import { useEffect } from 'react/cjs/react.development'
 import projectContract from "../../interface/projectContract.json"
 
-const contractAddress = "0x57CbA0853e54f80D566228c6842c32Fc6d11A3a1";
+const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
 
 export default function Project() {	
 	let [isOpen, setIsOpen] = useState(false);
 	const router = useRouter()
   	const { id } = router.query
     const [account, setAccount] = useState("")
-    const [Creator, setCreator] = useState("")
+ 
 	const [project, setProject] = useState([]);
+	
 	const [requests, setRequests] = useState([]);
 	const [amountToFund, setAmount] = useState()
 	const [myFunds, setMyFunds] = useState("");
@@ -40,6 +41,8 @@ export default function Project() {
 		console.log(id)
 		let account = await ethereum.request({ method: 'eth_accounts' });
 		setAccount(account[0]);
+
+		
 		 
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -51,16 +54,14 @@ export default function Project() {
 			let getProject = await contract.getDetails(Number(id));
 			setProject(getProject)
 			console.log(getProject);
-            
-            
-
-
+         
 			await myContribution(id)
 			
 		}
 		catch (e) {
 			console.log(e);
 		}
+		
 		await getAllRequest();
 	}
 
@@ -71,14 +72,18 @@ export default function Project() {
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
+		let check = await contract.checkIfFundingCompleteOrExpired(Number(id));
+		await check.wait();
+		getProject(id)
+		
 		try {
-
 			let amountToContribute  = utils.parseEther(amountToFund);
 			const options = {value: amountToContribute }
 			console.log(options);
 		 let fundProjectTxn = await contract.contribute(Number(id), options);
 		 await fundProjectTxn.wait();
 		 getProject(id)
+		
 			
 		} catch (e) {
 			alert(e.message)
@@ -93,7 +98,7 @@ export default function Project() {
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
         try {
 		let refundtxn  = await contract.getRefund(Number(id));
-		alert("refund status",refund)
+		alert("refund status",refundtxn)
 		getProject(id)
 		}
 		catch (e) {
@@ -123,7 +128,8 @@ export default function Project() {
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
         console.log(id);
 		let accounts = await ethereum.request({ method: 'eth_accounts' });
-		console.log("account is ", accounts[0], Creator);
+		console.log("account is ", accounts[0]);
+		
 		
 		let myFunding = await contract.myContributions(Number(id), accounts[0]);
 	
@@ -139,10 +145,10 @@ export default function Project() {
 		let allRequests = await contract.getAllRequests(Number(id));
 		setRequests(allRequests);	
 		console.log(allRequests);
-		
+	
 			
 		} catch (e) {
-			alert(e.message)
+		
 			
 		}
 
@@ -209,11 +215,13 @@ export default function Project() {
 
 					<a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={fundProject}>Fund this Project</a>
 
-				{project.state == 1 && <a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={utils.parseEther(getRefund)}> Get Refund</a>}
+				{project.state == 1 && <a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={getRefund}> Get Refund</a>}
 			
 			</div>
 			{   <div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
 					<h1 className='text-4xl font-bold mb-5 mt-10'> Project Withdrawal Requests</h1>
+					<a  className=' text-black px-3 py-2 text-xl font-medium mr-12 '> Balance - {(Number(project.currentBalance)/1000000000000000000).toFixed(5)} </a>
+
 
 					{<a onClick={() => setIsOpen(true)  } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12 '> Create Withdrawal Request</a>}
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">

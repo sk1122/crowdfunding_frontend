@@ -55,8 +55,8 @@ export default function Home() {
 	 let uploadImageOnIPFS = async () => {
 		const data = fileInput.files[0]
 		const file = new Moralis.File(data.name, data)
-		await file.saveIPFS();
-	   console.log('uploaded on ipfs', file.saveIPFS());
+		const files = await file.saveIPFS({useMasterKey: true});
+	   console.log('uploaded on ipfs', files);
 	   return file.ipfs();
 	 }
 
@@ -104,10 +104,6 @@ export default function Home() {
 			 alert(e.message)
 		   }
     }
-
-
-	 
-
 
 	return (
 		<div>
@@ -209,7 +205,7 @@ export default function Home() {
 						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
 						Upload Project Cover (On IPFS)
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="file" name="fileInput" id="fileInput" placeholder="Upload Project Cover" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="file" name="fileInput" id="fileInput" placeholder="Upload Project Cover" />
 					</div>
 					<div class="flex items-center justify-center mt-5">
 						<button onClick={() => {setIsOpen(false);

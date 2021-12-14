@@ -29,12 +29,6 @@ export default function Project() {
 	const [description, setDescription ] = useState("");
 	const [receiptent, setReceiptent] = useState("");
 
-
-
-	
-	
-
-
 	useEffect(() => {getProject(id)}, [id]) 
 	
 	async function getProject(id) { 
@@ -42,8 +36,6 @@ export default function Project() {
 		let account = await ethereum.request({ method: 'eth_accounts' });
 		setAccount(account[0]);
 
-		
-		 
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 		const signer = provider.getSigner();

@@ -7,7 +7,7 @@ import MyModal from '../../components/modal'
 import FAQ from "../../components/faq"
 import Footer from "../../components/footer"
 import Navbar from "../../components/navbar"
-import { useEffect } from 'react/cjs/react.development'
+import { useEffect } from 'react'
 import projectContract from "../../interface/projectContract.json"
 
 const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";

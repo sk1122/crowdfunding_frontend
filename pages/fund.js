@@ -86,9 +86,9 @@ export default function Home() {
 			let myFunding = await contract.myContributions(Number(id), accounts[0]);
 		
 			console.log(myFunding);
-			console.log("returned", ethers.utils.formatEther(myFunding.toNumber()));
+			console.log("returned", ethers.utils.formatEther(myFunding));
 
-			return (Number(ethers.utils.formatEther(myFunding.toNumber())));
+			return (Number(ethers.utils.formatEther(myFunding)));
 			
 		}
 		 

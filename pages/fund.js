@@ -9,7 +9,7 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
-const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
+// const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
 const contractAddress = "0x6C9AE8B5FCAFBCaFb0404e259f72F6b143d4e69f"; // mumbai matic
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)

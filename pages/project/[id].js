@@ -11,7 +11,7 @@ import { useEffect } from 'react/cjs/react.development'
 import projectContract from "../../interface/projectContract.json"
 
 const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
-const contractAddress = "0x5D5279793144210fE34b67C2bCd767Ecba24334D"; // mumbai matic
+const contractAddress = "0x6C9AE8B5FCAFBCaFb0404e259f72F6b143d4e69f"; // mumbai matic
 export default function Project() {	
 	let [isOpen, setIsOpen] = useState(false);
 	const router = useRouter()
@@ -258,7 +258,8 @@ export default function Project() {
 							 <br />
              			 <span className="title-font font-medium text-gray-900"> Request ID  - {Number(request.requestId)}</span>
              			 <span className="title-font font-medium text-gray-900"> Withdrawal Address  - {request.receipient}</span>
-             			 <span className="title-font font-medium text-gray-900"> Withdrawal Value  - {(Number(request.value)/1000000000000000000).toFixed(5)} </span>
+             			 <span className="title-font font-medium text-gray-900"> Withdrawal Value  - {(Number(request.value)/1000000000000000000).toFixed(3)} </span>
+             			 <span className="title-font font-medium text-gray-900"> Withdrawal Fee (3%) - {(Number(request.value)*3/100000000000000000000).toFixed(3)} </span>
              			 <span className="title-font font-medium text-gray-900"> Total Current Votes  - {Number(request.noOfVoter)} </span>
              			 <span className="title-font font-medium text-gray-900">
 						   Votes Required For Withdrawal  - {Math.round((Number(project.noOfContributors) - Number(request.noOfVoter))/2)}

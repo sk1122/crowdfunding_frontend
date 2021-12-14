@@ -12,7 +12,7 @@ import projectContract from "../interface/projectContract.json"
 import Moralis from 'moralis'
 
 const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
-const contractAddress = "0x5D5279793144210fE34b67C2bCd767Ecba24334D"; // mumbai matic
+const contractAddress = "0x6C9AE8B5FCAFBCaFb0404e259f72F6b143d4e69f"; // mumbai matic
 
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";

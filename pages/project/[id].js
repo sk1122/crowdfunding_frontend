@@ -72,9 +72,6 @@ export default function Project() {
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
-		let check = await contract.checkIfFundingCompleteOrExpired(Number(id));
-		await check.wait();
-		getProject(id)
 		
 		try {
 			let amountToContribute  = utils.parseEther(amountToFund);
@@ -98,14 +95,29 @@ export default function Project() {
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
         try {
 		let refundtxn  = await contract.getRefund(Number(id));
-		alert("refund status",refundtxn)
+		await refundtxn.wait();
+
+		// alert("refund status",refundtxn)
 		getProject(id)
+
 		}
 		catch (e) {
 			alert(e);
 		}
 
 	}
+
+	async function updateStatus() {
+		let provider = new ethers.providers.Web3Provider(window.ethereum);
+		let signer = provider.getSigner();
+		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
+
+		let check = await contract.checkIfFundingCompleteOrExpired(Number(id));
+		await check.wait();
+		getProject(id)
+	}
+ 
+
 	async function vote(e) {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
@@ -213,6 +225,7 @@ export default function Project() {
 				<p className='translate-x-36'>	Your Contribution - {myFunds} </p>
 				<input className="shadow appearance-none translate-x-32  border rounded w-230 py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Amount In Ether" onChange={(e)=> setAmount(e.currentTarget.value)} />
 
+					<a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={updateStatus}> Update State</a>
 					<a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={fundProject}>Fund this Project</a>
 
 				{project.state == 1 && <a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={getRefund}> Get Refund</a>}

@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import {ethers, utils} from "ethers"
 import { useState, useEffect } from 'react'
+
  
 import Navbar from '../components/navbar'
 import MyModal from '../components/modal'
@@ -144,7 +145,8 @@ export default function Home() {
 										<br />
 										<p>{Number(ethers.utils.formatEther(project.amountGoal)).toFixed(6)} ETH Goal</p>
 										<br />
-										<p>{Number(ethers.utils.formatEther(project.amountGoal)).toFixed(6) - Number(ethers.utils.formatEther(project.currentBalance)).toFixed(6)} ETH Needed</p>
+										{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000} ETH Needed</p> }
+							{Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 ETH Needed</p> }
 									</div>
 								</div>
 							</div>

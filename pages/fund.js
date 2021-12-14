@@ -16,8 +16,13 @@ export default function Home() {
 
 	let mapp = [1, 2, 3, 4, 5, 6];
 	let [allProjects, setAllProjects] = useState([]);
-    
-	useEffect( getProjectsFunc , []);
+	let [account, setAccount] = useState("");
+    let [allMyProjects, setMyProjects ] = useState([]);
+    let [totalContribution, setTotalContributions] = useState(0);
+
+	useEffect( () => {  getProjectsFunc() }, []);
+
+
 	async function getProjectsFunc() {
 		
 		let account = await ethereum.request({ method: 'eth_accounts' });
@@ -33,11 +38,63 @@ export default function Home() {
 			console.log(getAllProjectsArray[0][4]);
 			console.log(getAllProjectsArray)
 			setAllProjects(getAllProjectsArray);
-		}
+
+			
+		} 
 		catch (e) {
 			alert(e.message)
 		}
+
 	}
+
+
+	async function myProjects () {
+	
+			let newArr = [];
+			let totalContri = 0;
+			allProjects.forEach(async (p) => { 
+			  let contri = 	await myContribution(p.projectId);
+			  if (contri > 0 ) {
+
+				  console.log("condition met");
+				  newArr.push(p);
+				  totalContri = totalContri + contri;
+   
+			  }
+		   }  ) 
+		  setTimeout(() => {
+			  setMyProjects(newArr);
+		  console.log(newArr);
+		  
+		  console.log(allMyProjects);
+		  setTotalContributions(totalContri);
+			  
+		  }, 100); 
+		}
+
+	
+			
+		async function myContribution(id) {
+			let provider = new ethers.providers.Web3Provider(window.ethereum);
+			let signer = provider.getSigner();
+			let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
+			console.log(id);
+			let accounts = await ethereum.request({ method: 'eth_accounts' });
+			console.log("account is ", accounts[0]);
+			
+			
+			let myFunding = await contract.myContributions(Number(id), accounts[0]);
+		
+			console.log(myFunding);
+			console.log("returned", ethers.utils.formatEther(myFunding.toNumber()));
+
+			return (Number(ethers.utils.formatEther(myFunding.toNumber())));
+			
+		}
+		 
+
+	
+
 
     
 	return (
@@ -50,13 +107,39 @@ export default function Home() {
 				<div className="w-full h-screen flex flex-col justify-center items-center">
 					<h1 className='text-4xl font-bold mb-5'>Find a Project and fund them in ETH&nbsp;&nbsp;&nbsp;</h1>
 					<Link href='#'>
-						<a onClick={() => setIsOpen(true)} className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12'>Find a Project</a>
+						<a onClick={() => setIsOpen(true)} className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black '>Find a Project</a>
 					</Link>
+					<div className="w-full flex flex-col mt-20  ">
+				      { allMyProjects.length !== 0  && <div className="grid grid-cols-2  gap-4">
+					    <div className="flex flex-col justify-around items-center">
+						<h1 className="text-3xl">{allMyProjects.length}</h1>
+						<h2 className="text-xl">Projects Funded</h2>
+				      	</div>
+					        <div className="flex flex-col justify-center items-center">
+					      	<h1 className="text-3xl">{totalContribution}</h1>
+						   <h2 className="text-xl">Total Contributions</h2>
+					      </div>
+				       </div> }
+			    </div>
+
+
 				</div>
-				<div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
-					<h1 className='text-4xl font-bold mb-10 mt-10'>Projects</h1>
+				<div className="w-full bg-gray-400 flex justify-start items-center flex-col">
+				<a onClick={() => myProjects()} className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mt-10'>Get Funded Projects</a>
+
+				{ allMyProjects.length !== 0  && <div className="grid grid-cols-2 mt-4 gap-80">
+					    <div className="flex flex-col justify-around items-center">
+						<h1 className="text-3xl">{allMyProjects.length}</h1>
+						<h2 className="text-xl">Projects Funded</h2>
+				      	</div>
+					        <div className="flex flex-col justify-center items-center">
+					      	<h1 className="text-3xl">{totalContribution}</h1>
+						   <h2 className="text-xl">Total Contributions</h2>
+					      </div>
+				       </div> }
+
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
-						{allProjects.map(project => (
+						{allMyProjects.map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
 								<Link href={`/project/${Number(project.projectId)}`} id={project.projectId}>
 									<img src={project.img} alt="" />
@@ -78,6 +161,35 @@ export default function Home() {
 									</div>
 								</div>
 							</div>
+						))}
+					</div>
+				</div>
+				<div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
+					<h1 className='text-4xl font-bold mb-10 '>All Projects</h1>
+					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
+				{allProjects.map(project => (
+					<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
+						<Link href={`/project/${Number(project.projectId)}`} id={project.projectId}>
+							<img src={project.img} alt="" />
+						</Link>
+						<div class="p-5">
+							<Link href={`/project/${project.projectId}`}>
+								<h5 className='font-bold text-lg'>{project.title}</h5>
+							</Link>
+							{project.state == 0 && <p className=''> Current Status :- Fundrasing</p>}
+							{project.state == 1 && <p className=''> Current Status :- Expired</p>}
+							{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
+							
+							<br />
+							<p>{project.description}</p>
+							<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
+								<p>{utils.formatEther(project.currentBalance)} ETH Raised</p>
+								<p>{utils.formatEther(project.amountGoal)} ETH Goal</p>
+								{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000} ETH Needed</p> }
+					 {Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 ETH Needed</p> }
+							</div>
+						</div>
+					</div>
 						))}
 					</div>
 				</div>

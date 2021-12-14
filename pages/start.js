@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import {ethers, utils} from "ethers"
 import { useState, useEffect } from 'react'
+
  
 import Navbar from '../components/navbar'
 import MyModal from '../components/modal'
@@ -10,7 +11,7 @@ import Footer from '../components/footer'
 import projectContract from "../interface/projectContract.json"
 import Moralis from 'moralis'
 
-const contractAddress = "0x1E0715F1Fc2a9930A89Fd03f51b4E3b410386578";
+const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
 
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
@@ -83,9 +84,9 @@ export default function Home() {
 			 console.log(img);
 
 			const object = {
-				"title" : `${title}`,
+				"title" : "Light POC NFT",
 				"description": "This is a nft which is rewarded for contributing in any project on light",
-				"image": `${img}`
+				"image": "https://gateway.pinata.cloud/ipfs/QmeuqW1sFYDS1nMWSKszFaM4rkEtGQ7kxsXHGpMARhci5W",
 			  }
 			const file = new Moralis.File("file.json", {base64 : btoa(JSON.stringify(object))});
 			let uri = await file.saveIPFS();
@@ -100,7 +101,7 @@ export default function Home() {
 			
 		 } catch (e) {
 
-			 console.log(e);
+			 alert(e.message)
 		   }
     }
 
@@ -126,18 +127,26 @@ export default function Home() {
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 						{ allProjects.filter((ele)=> ele.creator.toLowerCase() == account[0].toLowerCase()).map(project => (
 							<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm" id={project.id}>
-								<a href="#">
+							<Link href={`/project/${Number(project.projectId)}`} id={project.projectId}>
 									<img src={project.img} alt="" />
-								</a>
-								<div class="p-5">
+							</Link>
+								<div class="p-4">
 									<a href="#">
 										<h5 className='font-bold text-lg'>{project.title}</h5>
 									</a>
+									{project.state == 0 && <p className=''> Current Status :- Fundrasing</p>}
+									{project.state == 1 && <p className=''> Current Status :- Expired</p>}
+									{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
+									
+									<br />
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-										<p>{ethers.utils.formatEther(project.currentBalance)} ETH Raised</p>
-										<p>{ethers.utils.formatEther((project.amountGoal))} ETH Goal</p>
-										<p>{ethers.utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
+										<p>{Number(ethers.utils.formatEther(project.currentBalance)).toFixed(6)} ETH Raised</p>
+										<br />
+										<p>{Number(ethers.utils.formatEther(project.amountGoal)).toFixed(6)} ETH Goal</p>
+										<br />
+										{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000} ETH Needed</p> }
+							{Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 ETH Needed</p> }
 									</div>
 								</div>
 							</div>
@@ -177,14 +186,9 @@ export default function Home() {
 						<label class="block text-gray-700 text-sm font-bold mb-2" for="location">
 							Location
 						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Location" />
+						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="location" type="text" placeholder="Location" />
 					</div>
-					<div class="mb-4">
-						<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-							Days
-						</label>
-						<input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Days" />
-					</div>
+					
 					<div class="w-full px-3 mb-6 md:mb-0">
 						<label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-state">
 							Category

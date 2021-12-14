@@ -63,6 +63,7 @@ export default function Navbar() {
 	}
 
 	useEffect(checkWalletConnected, [])
+	useEffect(login, [])
 
 	useEffect(() => {
 		console.log(account)
@@ -88,7 +89,7 @@ export default function Navbar() {
 					<div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
 						<div className="flex-shrink-0 flex items-center">
 							<Link href='/'>
-								<h1 className="font-inter text-black px-3 rounded-md text-xl font-semibold">Crowdfunding</h1>
+								<h1 className="font-inter text-black px-3 rounded-md text-xl font-semibold"> Light </h1>
 							</Link>
 						</div>
 					</div>

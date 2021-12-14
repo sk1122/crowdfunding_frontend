@@ -9,8 +9,8 @@ import MyModal from '../components/modal'
 import FAQ from '../components/faq'
 import Footer from '../components/footer'
 
-const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
-
+const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
+const contractAddress = "0x6C9AE8B5FCAFBCaFb0404e259f72F6b143d4e69f"; // mumbai matic
 export default function Home() {
 	let [isOpen, setIsOpen] = useState(false)
 
@@ -105,7 +105,7 @@ export default function Home() {
 			<div className='w-full h-full'>
 				<Navbar></Navbar>
 				<div className="w-full h-screen flex flex-col justify-center items-center">
-					<h1 className='text-4xl font-bold mb-5'>Find a Project and fund them in ETH&nbsp;&nbsp;&nbsp;</h1>
+					<h1 className='text-4xl font-bold mb-5'>Find a Project and fund them in MATIC&nbsp;&nbsp;&nbsp;</h1>
 					<Link href='#'>
 						<a onClick={() => setIsOpen(true)} className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black '>Find a Project</a>
 					</Link>
@@ -155,9 +155,9 @@ export default function Home() {
 									<br />
 									<p>{project.description}</p>
 									<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-									    <p>{utils.formatEther(project.currentBalance)} ETH Raised</p>
-										<p>{utils.formatEther(project.amountGoal)} ETH Goal</p>
-										<p>{utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} ETH Needed</p>
+									    <p>{utils.formatEther(project.currentBalance)} MATIC Raised</p>
+										<p>{utils.formatEther(project.amountGoal)} MATIC Goal</p>
+										<p>{utils.formatEther(project.amountGoal) - ethers.utils.formatEther(project.currentBalance)} MATIC Needed</p>
 									</div>
 								</div>
 							</div>
@@ -183,10 +183,10 @@ export default function Home() {
 							<br />
 							<p>{project.description}</p>
 							<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-								<p>{utils.formatEther(project.currentBalance)} ETH Raised</p>
-								<p>{utils.formatEther(project.amountGoal)} ETH Goal</p>
-								{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000} ETH Needed</p> }
-					 {Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 ETH Needed</p> }
+								<p>{utils.formatEther(project.currentBalance)} MATIC Raised</p>
+								<p>{utils.formatEther(project.amountGoal)} MATIC Goal</p>
+								{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{(Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000).toFixed(3)} MATIC Needed</p> }
+					 {Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 MATIC Needed</p> }
 							</div>
 						</div>
 					</div>

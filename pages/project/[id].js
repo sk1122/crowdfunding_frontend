@@ -10,8 +10,8 @@ import Navbar from "../../components/navbar"
 import { useEffect } from 'react/cjs/react.development'
 import projectContract from "../../interface/projectContract.json"
 
-const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
-
+const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
+const contractAddress = "0x5D5279793144210fE34b67C2bCd767Ecba24334D"; // mumbai matic
 export default function Project() {	
 	let [isOpen, setIsOpen] = useState(false);
 	const router = useRouter()
@@ -22,7 +22,7 @@ export default function Project() {
 	
 	const [requests, setRequests] = useState([]);
 	const [amountToFund, setAmount] = useState()
-	const [myFunds, setMyFunds] = useState("");
+	const [myFunds, setMyFunds] = useState(0);
 
 	// state for withdraw
 	const [amountToWithdraw, setAmountToWithdraw] = useState(0);
@@ -73,20 +73,25 @@ export default function Project() {
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
 		
+		if(amountToFund == "" || amountToFund == 0) {
+			alert("funding amount can't be 0 since you can't pour from an empty cup");
+		}
+		else {
 		try {
 			let amountToContribute  = utils.parseEther(amountToFund);
 			const options = {value: amountToContribute }
-			console.log(options);
+			console.log(amountToFund);
 		 let fundProjectTxn = await contract.contribute(Number(id), options);
 		 await fundProjectTxn.wait();
 		 getProject(id)
 		
 			
 		} catch (e) {
-			alert(e.message)
+			alert("project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
 			
 			
 		}
+	}
 	}
 
 	async function getRefund() {
@@ -152,7 +157,8 @@ export default function Project() {
 	async function getAllRequest() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
-
+       
+	  	
 		try {
 		let allRequests = await contract.getAllRequests(Number(id));
 		setRequests(allRequests);	
@@ -213,20 +219,21 @@ export default function Project() {
 						{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
 						<p>{Number(project.deadline)}</p>
 						<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
-							<p>{(Number(project.currentBalance)/1000000000000000000).toString()} ETH Raised</p>
+							<p>MATIC Raised :- {(Number(project.currentBalance)/1000000000000000000).toFixed(2)} </p>
 							<br />
-							<p>{Number(project.amountGoal)/1000000000000000000} ETH Goal</p>
+							<p> MATIC Goal :- {Number(project.amountGoal)/1000000000000000000}</p>
 							<br />
-							{Number(project.amountGoal) > (Number(project.currentBalance)) && <p>{Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000} ETH Needed</p> }
-							{Number(project.amountGoal) < (Number(project.currentBalance)) && <p> 0 ETH Needed</p> }
+							{Number(project.amountGoal) > (Number(project.currentBalance)) && <p> MATIC Needed :- {(Number(project.amountGoal)/1000000000000000000 - Number(project.currentBalance)/1000000000000000000).toFixed(3)} </p> }
+							{Number(project.amountGoal) < (Number(project.currentBalance)) && <p> MATIC Needed :- 0</p> }
 						</div>
 					</div> 
 				</div>
 				<p className='translate-x-36'>	Your Contribution - {myFunds} </p>
 				<input className="shadow appearance-none translate-x-32  border rounded w-230 py-2 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="Amount In Ether" onChange={(e)=> setAmount(e.currentTarget.value)} />
 
-					<a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={updateStatus}> Update State</a>
 					<a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={fundProject}>Fund this Project</a>
+					<br />
+				<p className=''> If getting error while funding, it means project is expired (if not succesful), consider updating the status 👇 so that it can appear on the project that the project is expired for everyone  </p>	<a className='bg-gray-200 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-100 hover:text-black mt-4' onClick={updateStatus}> Update State</a>
 
 				{project.state == 1 && <a className='bg-gray-900 text-white px-3  translate-x-32  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-4' onClick={getRefund}> Get Refund</a>}
 			

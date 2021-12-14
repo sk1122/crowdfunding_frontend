@@ -7,7 +7,7 @@ import MyModal from '../../components/modal'
 import FAQ from "../../components/faq"
 import Footer from "../../components/footer"
 import Navbar from "../../components/navbar"
-import { useEffect } from 'react/cjs/react.development'
+import { useEffect } from 'react'
 import projectContract from "../../interface/projectContract.json"
 
 const contractAddressRinkeby = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
@@ -29,12 +29,6 @@ export default function Project() {
 	const [description, setDescription ] = useState("");
 	const [receiptent, setReceiptent] = useState("");
 
-
-
-	
-	
-
-
 	useEffect(() => {getProject(id)}, [id]) 
 	
 	async function getProject(id) { 
@@ -42,8 +36,6 @@ export default function Project() {
 		let account = await ethereum.request({ method: 'eth_accounts' });
 		setAccount(account[0]);
 
-		
-		 
 		const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 		const signer = provider.getSigner();

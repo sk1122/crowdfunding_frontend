@@ -18,7 +18,7 @@ const client = create('https://ipfs.infura.io:5001/api/v0')
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
     const appId = "bOY1ool81GNT0Ty6e99SBOSNi9aZ5jDfJXQhBjbC";
-	Moralis.initialize(appId, "uU2Tk7hhpL924c5O7gulviP4mo0hNEIjN1LewIIj")
+
 
     Moralis.start({ serverUrl, appId });
     

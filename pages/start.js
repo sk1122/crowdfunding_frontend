@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import {ethers, utils} from "ethers"
 import { useState, useEffect } from 'react'
+import { create } from 'ipfs-http-client'
 
  
 import Navbar from '../components/navbar'
@@ -12,7 +13,7 @@ import projectContract from "../interface/projectContract.json"
 import Moralis from 'moralis'
 
 const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
-
+const client = create('https://ipfs.infura.io:5001/api/v0')
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
     const appId = "bOY1ool81GNT0Ty6e99SBOSNi9aZ5jDfJXQhBjbC";
@@ -48,11 +49,17 @@ export default function Home() {
 		}
 	}
 
+	// let uploadImageOnIPFS = async () => {
+	// 	const data = fileInput.files[0]
+	// 	const file = new Moralis.File(data.name, data)
+	// 	const files = await file.saveIPFS({useMasterKey: true});
+	// 	return file.ipfs();
+	// }
 	let uploadImageOnIPFS = async () => {
-		const data = fileInput.files[0]
-		const file = new Moralis.File(data.name, data)
-		const files = await file.saveIPFS({useMasterKey: true});
-		return file.ipfs();
+		const file = fileInput.files[0]
+		const added = await client.add(file);
+		const url = `https://ipfs.infura.io/ipfs/${added.path}`
+		return url;
 	}
 
      async function startProject() {
@@ -77,17 +84,17 @@ export default function Home() {
 			 let img = await uploadImageOnIPFS();
 			 console.log(img);
 
-			const object = {
-				"title" : "Light POC NFT",
-				"description": "This is a nft which is rewarded for contributing in any project on light",
-				"image": "https://gateway.pinata.cloud/ipfs/QmeuqW1sFYDS1nMWSKszFaM4rkEtGQ7kxsXHGpMARhci5W",
-			  }
-			const file = new Moralis.File("file.json", {base64 : btoa(JSON.stringify(object))});
-			let uri = await file.saveIPFS();
-			console.log(uri._ipfs);
+			// const object = {
+			// 	"title" : "Light POC NFT",
+			// 	"description": "This is a nft which is rewarded for contributing in any project on light",
+			// 	"image": "https://gateway.pinata.cloud/ipfs/QmeuqW1sFYDS1nMWSKszFaM4rkEtGQ7kxsXHGpMARhci5W",
+			//   }
+			// const file = new Moralis.File("file.json", {base64 : btoa(JSON.stringify(object))});
+			// let uri = await file.saveIPFS();
+			// console.log(uri._ipfs);
 			
-	
-			let txn = await contract.startProject(title, desc, time, amount, location, selects, img, uri._ipfs);
+	        let uri = "https://gateway.pinata.cloud/ipfs/QmUa2KQr7xmuFA9VCMLKbGFDBGwXnEroHxoFNVahs49HtQ";
+			let txn = await contract.startProject(title, desc, time, amount, location, selects, img, uri);
 			let txnreceipt = await txn.wait();
 			console.log(txnreceipt);
 			getProjectsFunc();

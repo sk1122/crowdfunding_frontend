@@ -16,7 +16,7 @@ export default function Project() {
 	let [isOpen, setIsOpen] = useState(false);
 	const router = useRouter()
   	const { id } = router.query
-    const [account, setAccount] = useState("")
+	const [account, setAccount] = useState("")
  
 	const [project, setProject] = useState([]);
 	
@@ -46,7 +46,7 @@ export default function Project() {
 			let getProject = await contract.getDetails(Number(id));
 			setProject(getProject)
 			console.log(getProject);
-         
+		 
 			await myContribution(id)
 			
 		}
@@ -64,33 +64,27 @@ export default function Project() {
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
-		
 		if(amountToFund == "" || amountToFund <= 0) {
 			alert("funding amount can't be 0 or less since you can't pour from an empty cup");
 		}
 		else {
-		try {
-			let amountToContribute  = utils.parseEther(amountToFund);
-			const options = {value: amountToContribute }
-			console.log(amountToFund);
-		 let fundProjectTxn = await contract.contribute(Number(id), options);
-		 await fundProjectTxn.wait();
-		 getProject(id)
-		
-			
-		} catch (e) {
-			alert("project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
-			
-			
+			try {
+				let amountToContribute  = utils.parseEther(amountToFund);
+				const options = {value: amountToContribute }
+				let fundProjectTxn = await contract.contribute(Number(id), options);
+				await fundProjectTxn.wait();
+				getProject(id)	
+			} catch (e) {
+				alert("project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
+			}
 		}
-	}
 	}
 
 	async function getRefund() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
-        try {
+		try {
 		let refundtxn  = await contract.getRefund(Number(id));
 		await refundtxn.wait();
 
@@ -122,10 +116,10 @@ export default function Project() {
 		try {
 			console.log(e.currentTarget.id);
 			
-		let votetxn  = await contract.voteRequest(Number(id), e.currentTarget.id);
-		await votetxn.wait();
-		getProject(id)
-	     }
+			let votetxn  = await contract.voteRequest(Number(id), e.currentTarget.id);
+			await votetxn.wait();
+			getProject(id)
+		}
 		catch (e) {
 			alert(e);
 		}
@@ -135,7 +129,7 @@ export default function Project() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
-        console.log(id);
+		console.log(id);
 		let accounts = await ethereum.request({ method: 'eth_accounts' });
 		console.log("account is ", accounts[0]);
 		
@@ -149,17 +143,14 @@ export default function Project() {
 	async function getAllRequest() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
-       
+	   
 	  	
 		try {
-		let allRequests = await contract.getAllRequests(Number(id));
-		setRequests(allRequests);	
-		console.log(allRequests);
-	
-			
+			let allRequests = await contract.getAllRequests(Number(id));
+			setRequests(allRequests);	
+			console.log(allRequests);		
 		} catch (e) {
-		
-			
+			console.log(e)
 		}
 
 	}
@@ -175,24 +166,16 @@ export default function Project() {
 
 
 		try {
-
-			
 			let amount = ethers.utils.parseEther(amountToWithdraw);
 			console.log(amount, description, receiptent);
-
-			
 			let createRequestTxn = await contract.createRequest(Number(id), description, amount, receiptent);
 			await createRequestTxn.wait();
 			console.log("request created"); 
 			getAllRequest();
-			} catch (e) {
-				alert(e.message)
-	            
-			}		
-		
+		} catch (e) {
+			alert(e.message)
+		}		
 	}
-
-
 
 	return (
 		<div className="w-full h-full">
@@ -240,28 +223,28 @@ export default function Project() {
 
 
 					{requests.map( (request) => (<div class="p-4 md:w-full w-full"> 
-					      <div class="h-full bg-gray-100 p-8 rounded">
-          
-        
-                       <p className="leading-relaxed font-medium mb-6"> {request.desc} </p>
-                       <a className="inline-flex items-center">
-            			<span className="flex-grow flex flex-col ">
-             			 <span className="title-font font-medium text-gray-900"> Current Status  - {!request.status && "Not Completed"} {request.status && "Completed"}</span>
-							 <br />
-             			 <span className="title-font font-medium text-gray-900"> Request ID  - {Number(request.requestId)}</span>
-             			 <span className="title-font font-medium text-gray-900"> Withdrawal Address  - {request.receipient}</span>
-             			 <span className="title-font font-medium text-gray-900"> Withdrawal Value  - {(Number(request.value)/1000000000000000000).toFixed(3)} </span>
-             			 <span className="title-font font-medium text-gray-900"> Withdrawal Fee (3%) - {(Number(request.value)*3/100000000000000000000).toFixed(3)} </span>
-             			 <span className="title-font font-medium text-gray-900"> Total Current Votes  - {Number(request.noOfVoter)} </span>
-             			 <span className="title-font font-medium text-gray-900">
+						  <div class="h-full bg-gray-100 p-8 rounded">
+		  
+		
+					   <p className="leading-relaxed font-medium mb-6"> {request.desc} </p>
+					   <a className="inline-flex items-center">
+						<span className="flex-grow flex flex-col ">
+						<span className="title-font font-medium text-gray-900"> Current Status  - {!request.status && "Not Completed"} {request.status && "Completed"}</span>
+							<br />
+						<span className="title-font font-medium text-gray-900"> Request ID  - {Number(request.requestId)}</span>
+						<span className="title-font font-medium text-gray-900"> Withdrawal Address  - {request.receipient}</span>
+						<span className="title-font font-medium text-gray-900"> Withdrawal Value  - {(Number(request.value)/1000000000000000000).toFixed(3)} </span>
+						<span className="title-font font-medium text-gray-900"> Withdrawal Fee (3%) - {(Number(request.value)*3/100000000000000000000).toFixed(3)} </span>
+						<span className="title-font font-medium text-gray-900"> Total Current Votes  - {Number(request.noOfVoter)} </span>
+						<span className="title-font font-medium text-gray-900">
 						   Votes Required For Withdrawal  - {Math.round((Number(project.noOfContributors) - Number(request.noOfVoter))/2)}
-						    </span>
+						</span>
 						  { !request.status && <a className='bg-gray-900 text-white px-16  py-2 rounded-md text-md font-medium hover:bg-gray-400 hover:text-black mt-10' id={Number(request.requestId)} onClick={(e) => {vote(e)}} > <p className='mx-16 px-4'> Vote This Request</p></a> }
-            
-                      </span>
-                   </a>
-                   </div>
-                  </div>) )}
+			
+					  </span>
+				   </a>
+				   </div>
+				  </div>) )}
 					 
 					 
 						

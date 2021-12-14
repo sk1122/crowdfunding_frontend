@@ -73,8 +73,8 @@ export default function Project() {
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
 		
-		if(amountToFund == "" || amountToFund == 0) {
-			alert("funding amount can't be 0 since you can't pour from an empty cup");
+		if(amountToFund == "" || amountToFund <= 0) {
+			alert("funding amount can't be 0 or less since you can't pour from an empty cup");
 		}
 		else {
 		try {

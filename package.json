@@ -9,6 +9,7 @@
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
     "ethers": "^5.5.2",
+    "ipfs-http-client": "^54.0.2",
     "moralis": "^0.0.140",
     "next": "latest",
     "react": "^17.0.2",

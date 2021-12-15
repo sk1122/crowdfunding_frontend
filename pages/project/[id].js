@@ -63,9 +63,13 @@ export default function Project() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
-
+        let Account = await ethereum.request({ method: 'eth_accounts' });
 		if(amountToFund == "" || amountToFund <= 0) {
 			alert("funding amount can't be 0 or less since you can't pour from an empty cup");
+		}
+		else if (Account[0].toLowerCase() == project.creator.toLowerCase()) {
+			alert("project creator can't contribute")
+
 		}
 		else {
 			try {

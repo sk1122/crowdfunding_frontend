@@ -164,11 +164,11 @@ export default function Home() {
 						))}
 					</div>
 				</div>
-				<div className="w-full h-full bg-gray-400 flex justify-start items-center flex-col">
+				<div className="w-full  h-full bg-gray-400 flex justify-start items-center flex-col">
 					<h1 className='text-4xl font-bold mb-10 '>All Projects</h1>
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 				{allProjects.map(project => (
-					<div class="bg-white shadow-md border border-gray-200 rounded-lg max-w-sm">
+					<div class="bg-white customcss shadow-md border border-gray-200 rounded-lg max-w-sm">
 						<Link href={`/project/${Number(project.projectId)}`} id={project.projectId}>
 							<img src={project.img} alt="" />
 						</Link>

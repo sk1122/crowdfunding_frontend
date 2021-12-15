@@ -23,6 +23,18 @@
 	animation: gradient 8s ease infinite;
 	height: 100vh;
 }
+ 
+ .customcss {
+	transition: 0.3s ease-out;
+	box-shadow: 15px 22px 15px 0px rgba(0, 0, 0, 0.69);
+	-webkit-box-shadow: 15px 22px 15px 0px rgba(0, 0, 0, 0.69);
+	-moz-box-shadow: 15px 22px 15px 0px rgba(0, 0, 0, 0.69);
+
+ }
+ .customcss:hover {
+	transform: translate(-1%, -2%);
+    background-color: #c8d3e9;
+ }
 
 @keyframes gradient {
 	0% {

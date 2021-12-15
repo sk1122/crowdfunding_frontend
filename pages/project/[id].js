@@ -37,6 +37,7 @@ export default function Project() {
 	const [receiptent, setReceiptent] = useState("");
 
 	useEffect(() => {getProject(id)}, [id]) 
+	useEffect(() => {unixToDate()}, [project]) 
 	
 	async function getProject(id) { 
 		console.log(id)
@@ -55,13 +56,15 @@ export default function Project() {
 			console.log(getProject);
 		 
 			await myContribution(id)
-			unixToDate()
+
+			
 		}
 		catch (e) {
 			console.log(e);
 		}
 		
 		await getAllRequest();
+		
 	}
 
 	async function fundProject() {
@@ -126,7 +129,7 @@ export default function Project() {
 		}
 
 	}
-	function unixToDate() {
+	async function unixToDate() {
 		let unixTime = Number(project.deadline)*1000 // unix time in milliseconds
 
 		const dateObject = new Date(unixTime);
@@ -170,6 +173,8 @@ export default function Project() {
 		}
 	}
 
+ 
+
 	async function myContribution() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
@@ -188,12 +193,15 @@ export default function Project() {
 	async function getAllRequest() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, provider);
-	   
+	    
 	  	
 		try {
 			let allRequests = await contract.getAllRequests(Number(id));
 			setRequests(allRequests);	
-			console.log(allRequests);		
+			console.log(allRequests);	
+
+	
+			
 		} catch (e) {
 			console.log(e)
 		}

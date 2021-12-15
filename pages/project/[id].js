@@ -29,6 +29,8 @@ export default function Project() {
 	const [amountToFund, setAmount] = useState()
 	const [myFunds, setMyFunds] = useState(0);
 
+	const [deadline, setDeadline ] = useState({});
+
 	// state for withdraw
 	const [amountToWithdraw, setAmountToWithdraw] = useState(0);
 	const [description, setDescription ] = useState("");
@@ -53,7 +55,7 @@ export default function Project() {
 			console.log(getProject);
 		 
 			await myContribution(id)
-			
+			unixToDate()
 		}
 		catch (e) {
 			console.log(e);
@@ -123,6 +125,22 @@ export default function Project() {
 			alert(e);
 		}
 
+	}
+	function unixToDate() {
+		let unixTime = Number(project.deadline)*1000 // unix time in milliseconds
+
+		const dateObject = new Date(unixTime);
+		const humanDateFormat = dateObject.toLocaleString() // 2021-12-9 10:34:30
+		let dateDeadline = {
+			 day: `${dateObject.toLocaleString("en-Us", {day: "numeric"})}`,
+			 month: `${dateObject.toLocaleString("en-Us", {month: "long"})}`,
+			 year: `${dateObject.toLocaleString("en-Us", {year: "numeric"})}`,
+			 hour: `${dateObject.toLocaleString("en-Us", {hour: "numeric"})}`,
+			 minute: `${dateObject.toLocaleString("en-Us", {minute: "numeric"})}`,
+			 second: `${dateObject.toLocaleString("en-Us", {second: "numeric"})}`,
+			 timeZone: `${dateObject.toLocaleString("en-Us", {timeZoneName: "short"})}`
+		}
+		setDeadline(dateDeadline);
 	}
 
 	async function updateStatus() {
@@ -232,7 +250,7 @@ export default function Project() {
 						{project.state == 0 && <p className=''> Current Status :- Fundraising</p>}
 						{project.state == 1 && <p className=''> Current Status :- Expired</p>}
 						{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
-						<p>{Number(project.deadline)}</p>
+						<p> Deadline: - {deadline.hour} on {deadline.day}th  {deadline.month} {deadline.year} <br /> TimeZone -  {deadline.timeZone}  </p>
 						<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
 							<p>MATIC Raised :- {(Number(project.currentBalance)/1000000000000000000).toFixed(2)} </p>
 							<br />

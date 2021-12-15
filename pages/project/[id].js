@@ -3,6 +3,11 @@ import Link from 'next/link'
 import { useState } from 'react'
 import {BigNumber, ethers, utils} from "ethers"
 import MyModal from '../../components/modal'
+import {
+    Block, BlockTag, BlockWithTransactions, EventType, Filter, FilterByBlockHash, ForkEvent,
+    Listener, Log, Provider, TransactionReceipt, TransactionRequest, TransactionResponse
+} from "@ethersproject/abstract-provider";
+import { Deferrable, defineReadOnly, getStatic, resolveProperties } from "@ethersproject/properties";
 
 import FAQ from "../../components/faq"
 import Footer from "../../components/footer"
@@ -63,9 +68,26 @@ export default function Project() {
 		let provider = new ethers.providers.Web3Provider(window.ethereum);
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
+
+
         let Account = await ethereum.request({ method: 'eth_accounts' });
+
+		
+		const blocktag = await provider._getBlockTag();
+		// console.log(blocktag);
+		
+		const result = await provider.getBalance(Account[0], blocktag);
+		
+		// console.log(Number(result));
+		let balance = ethers.utils.formatEther(result);
+		// console.log(balance);
+		
+		
 		if(amountToFund == "" || amountToFund <= 0) {
 			alert("funding amount can't be 0 or less since you can't pour from an empty cup");
+		}
+		else if (balance <= amountToFund ) {
+			alert("amount to contribute is more than you balance, can't contribute");
 		}
 		else if (Account[0].toLowerCase() == project.creator.toLowerCase()) {
 			alert("project creator can't contribute")
@@ -79,7 +101,8 @@ export default function Project() {
 				await fundProjectTxn.wait();
 				getProject(id)	
 			} catch (e) {
-				alert("project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
+				console.log(`e`, e)
+				alert(e.message, "project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
 			}
 		}
 	}

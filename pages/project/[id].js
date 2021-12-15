@@ -181,6 +181,19 @@ export default function Project() {
 		}		
 	}
 
+  async function createRequestButtonHandler() {
+	let Account = await ethereum.request({ method: 'eth_accounts' });
+	if (Account[0].toLowerCase() !== project.creator.toLowerCase()) {
+		alert("only project creator can create requests for withdrawal")
+
+	}
+
+	else {
+		setIsOpen(true)
+
+	}
+  }
+
 	return (
 		<div className="w-full h-full">
 			<Navbar></Navbar>
@@ -222,7 +235,7 @@ export default function Project() {
 					<a  className=' text-black px-3 py-2 text-xl font-medium mr-12 '> Balance - {(Number(project.currentBalance)/1000000000000000000).toFixed(5)} </a>
 
 
-					{<a onClick={() => setIsOpen(true)  } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12 '> Create Withdrawal Request</a>}
+					{<a onClick={() => createRequestButtonHandler() } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12 '> Create Withdrawal Request</a>}
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 
 

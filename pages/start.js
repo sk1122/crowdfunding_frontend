@@ -12,14 +12,14 @@ import Footer from '../components/footer'
 import projectContract from "../interface/projectContract.json"
 import Moralis from 'moralis'
 
-const contractAddress = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
+// const contractAddressR = "0x6E4EC75096C050Cda0467fD9DC0D35496538b019";
+const contractAddress = "0x6C9AE8B5FCAFBCaFb0404e259f72F6b143d4e69f"; // mumbai matic
 const client = create('https://ipfs.infura.io:5001/api/v0')
 export default function Home() {
 	const serverUrl = "https://gof9exmm7cf0.usemoralis.com:2053/server";
     const appId = "bOY1ool81GNT0Ty6e99SBOSNi9aZ5jDfJXQhBjbC";
 	const masterKey = "uU2Tk7hhpL924c5O7gulviP4mo0hNEIjN1LewIIj"
-	Moralis.start({ serverUrl, appId, masterKey })
-
+	Moralis.start({ serverUrl, appId, masterKey }) 
 	let [isOpen, setIsOpen] = useState(false)
     let [selects, setSelects] = useState("");
     let [allProjects, setAllProjects] = useState([]);
@@ -83,7 +83,7 @@ export default function Home() {
 			 // image process upload to ipfs first 
 			 let img = await uploadImageOnIPFS();
 			 console.log(img);
-
+            
 			// const object = {
 			// 	"title" : "Light POC NFT",
 			// 	"description": "This is a nft which is rewarded for contributing in any project on light",
@@ -98,7 +98,7 @@ export default function Home() {
 			let txnreceipt = await txn.wait();
 			console.log(txnreceipt);
 			getProjectsFunc();
-		
+		    
 			
 		 } catch (e) {
 

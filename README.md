@@ -1,3 +1,12 @@
+We all must be familiar with how crowdfunding dapps work, well Light takes the concept of crowdfunding forward with more secure crowdfunding process, adding withdrawal security by adding a withdrawal request feature for the fund raiser to ask all the contributors to vote on the decision of withdrawal, so we make sure the fund is use wisely and incentivising contribution by distributing Light NFTs to the contributor as Proof Of Contribution.
+
+TLDR, On Light anyone can start a project/campaign and decide how much funding they want in how much amount of time, if the funded amount is >= the goal , then the funds are send in the contract, or else if the amount is not met under deadline, the contributors will get option to get refund. Once the funding is succesful , the fund raiser will have to post requests , adding the description and amount of withdrawal request. If the request gets more than 50% of the votes from the contributors, then the request is met and transfered to the receiptent, or else the request is rejected. Also the contributors will get a NFt minted for contributing in projects/campaigns.
+
+
+
+
+
+
 # Next.js + Tailwind CSS Example
 
 This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v2.2)](https://blog.tailwindcss.com/tailwindcss-2-2) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).

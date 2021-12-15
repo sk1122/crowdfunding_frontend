@@ -3,6 +3,11 @@ import Link from 'next/link'
 import { useState } from 'react'
 import {BigNumber, ethers, utils} from "ethers"
 import MyModal from '../../components/modal'
+import {
+    Block, BlockTag, BlockWithTransactions, EventType, Filter, FilterByBlockHash, ForkEvent,
+    Listener, Log, Provider, TransactionReceipt, TransactionRequest, TransactionResponse
+} from "@ethersproject/abstract-provider";
+import { Deferrable, defineReadOnly, getStatic, resolveProperties } from "@ethersproject/properties";
 
 import FAQ from "../../components/faq"
 import Footer from "../../components/footer"
@@ -23,6 +28,8 @@ export default function Project() {
 	const [requests, setRequests] = useState([]);
 	const [amountToFund, setAmount] = useState()
 	const [myFunds, setMyFunds] = useState(0);
+
+	const [deadline, setDeadline ] = useState({});
 
 	// state for withdraw
 	const [amountToWithdraw, setAmountToWithdraw] = useState(0);
@@ -48,7 +55,7 @@ export default function Project() {
 			console.log(getProject);
 		 
 			await myContribution(id)
-			
+			unixToDate()
 		}
 		catch (e) {
 			console.log(e);
@@ -64,8 +71,29 @@ export default function Project() {
 		let signer = provider.getSigner();
 		let contract = new ethers.Contract(contractAddress, projectContract.abi, signer);
 
+
+        let Account = await ethereum.request({ method: 'eth_accounts' });
+
+		
+		const blocktag = await provider._getBlockTag();
+		// console.log(blocktag);
+		
+		const result = await provider.getBalance(Account[0], blocktag);
+		
+		// console.log(Number(result));
+		let balance = ethers.utils.formatEther(result);
+		// console.log(balance);
+		
+		
 		if(amountToFund == "" || amountToFund <= 0) {
 			alert("funding amount can't be 0 or less since you can't pour from an empty cup");
+		}
+		else if (balance <= amountToFund ) {
+			alert("amount to contribute is more than you balance, can't contribute");
+		}
+		else if (Account[0].toLowerCase() == project.creator.toLowerCase()) {
+			alert("project creator can't contribute")
+
 		}
 		else {
 			try {
@@ -75,7 +103,8 @@ export default function Project() {
 				await fundProjectTxn.wait();
 				getProject(id)	
 			} catch (e) {
-				alert("project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
+				console.log(`e`, e)
+				alert(e.message, "project is expired or succesfull, consider updating the state (from button below fund project) so that it can appear on the project that the project is expired for everyone" )
 			}
 		}
 	}
@@ -96,6 +125,22 @@ export default function Project() {
 			alert(e);
 		}
 
+	}
+	function unixToDate() {
+		let unixTime = Number(project.deadline)*1000 // unix time in milliseconds
+
+		const dateObject = new Date(unixTime);
+		const humanDateFormat = dateObject.toLocaleString() // 2021-12-9 10:34:30
+		let dateDeadline = {
+			 day: `${dateObject.toLocaleString("en-Us", {day: "numeric"})}`,
+			 month: `${dateObject.toLocaleString("en-Us", {month: "long"})}`,
+			 year: `${dateObject.toLocaleString("en-Us", {year: "numeric"})}`,
+			 hour: `${dateObject.toLocaleString("en-Us", {hour: "numeric"})}`,
+			 minute: `${dateObject.toLocaleString("en-Us", {minute: "numeric"})}`,
+			 second: `${dateObject.toLocaleString("en-Us", {second: "numeric"})}`,
+			 timeZone: `${dateObject.toLocaleString("en-Us", {timeZoneName: "short"})}`
+		}
+		setDeadline(dateDeadline);
 	}
 
 	async function updateStatus() {
@@ -177,6 +222,19 @@ export default function Project() {
 		}		
 	}
 
+  async function createRequestButtonHandler() {
+	let Account = await ethereum.request({ method: 'eth_accounts' });
+	if (Account[0].toLowerCase() !== project.creator.toLowerCase()) {
+		alert("only project creator can create requests for withdrawal")
+
+	}
+
+	else {
+		setIsOpen(true)
+
+	}
+  }
+
 	return (
 		<div className="w-full h-full">
 			<Navbar></Navbar>
@@ -192,7 +250,7 @@ export default function Project() {
 						{project.state == 0 && <p className=''> Current Status :- Fundraising</p>}
 						{project.state == 1 && <p className=''> Current Status :- Expired</p>}
 						{project.state == 2 && <p className=''> Current Status :- Succesfull</p>}
-						<p>{Number(project.deadline)}</p>
+						<p> Deadline: - {deadline.hour} on {deadline.day}th  {deadline.month} {deadline.year} <br /> TimeZone -  {deadline.timeZone}  </p>
 						<div className="grid grid-cols-2 grid-rows-2 text-sm mt-5">
 							<p>MATIC Raised :- {(Number(project.currentBalance)/1000000000000000000).toFixed(2)} </p>
 							<br />
@@ -218,7 +276,7 @@ export default function Project() {
 					<a  className=' text-black px-3 py-2 text-xl font-medium mr-12 '> Balance - {(Number(project.currentBalance)/1000000000000000000).toFixed(5)} </a>
 
 
-					{<a onClick={() => setIsOpen(true)  } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12 '> Create Withdrawal Request</a>}
+					{<a onClick={() => createRequestButtonHandler() } className='bg-gray-900 text-white px-3 py-2 rounded-md text-xl font-medium hover:bg-gray-400 hover:text-black mr-12 '> Create Withdrawal Request</a>}
 					<div className="grid grid-cols-3 grid-rows-2 gap-10 m-10">
 
 
